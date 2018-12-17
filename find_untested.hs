@@ -20,13 +20,13 @@ allMentioned = do
   p <- pwd
   m <- Tu.find (suffix "CMakeLists.txt") p
   s <- srcs
-  grep (text s) (input m)
+  grep (suffix (text s)) (input m)
 
 -- Gives a stream of all the files not mentioned in a makefile
 notMentioned = do
   s <- srcs
   -- monadic bool that tells whether s is within any makefile or not..
-  let mentioned = fold allMentioned $ Fold.any (\x -> (lineToText x) == s) 
+  let mentioned = fold allMentioned $ Fold.any (\x -> DT.isSuffixOf s (lineToText x))
   -- if this Line was mentioned, then we fail this block
   ifM (mentioned) (empty) (return s)
 
