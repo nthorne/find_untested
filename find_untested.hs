@@ -8,11 +8,18 @@ import qualified Control.Foldl as Fold
 import Control.Conditional
 import qualified Data.Text as DT
 
-
+-- Gives a stream of file names that matches a few hard coded patterns
 srcs :: Shell Text
 srcs = do
   p <- pwd
-  s <- Tu.find (suffix ".c") p
+  s <- lstree p
+  _:_ <- return (match (suffix ".c") (format fp s))
+  _:_ <- return (match (invert (has "audio_utility")) (format fp s))
+  _:_ <- return (match (invert (has "target_tools")) (format fp s))
+  _:_ <- return (match (invert (has "vip_exeriment")) (format fp s))
+  _:_ <- return (match (invert (has "testutils")) (format fp s))
+  _:_ <- return (match (invert (has "manufacturing")) (format fp s))
+  _:_ <- return (match (invert (has "_stub")) (format fp s))
   return $ format fp $ Tu.filename s
 
 allMentioned :: Shell Line
